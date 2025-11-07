@@ -115,9 +115,17 @@ All colors MUST be HSL.
   }
 }
 
-/* Google Translate customizations */
-iframe.goog-te-banner-frame {
+/* Google Translate customizations - Hide all banners and popups */
+iframe.goog-te-banner-frame,
+.goog-te-banner-frame,
+#google_translate_element iframe {
   display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
 }
 
 div#google_translate_element .goog-te-gadget-simple {
@@ -132,18 +140,32 @@ div#google_translate_element .goog-te-gadget-simple span {
 
 div#google_translate_element .goog-te-combo {
   background: transparent;
-  border: none;
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) - 2px);
   font-family: inherit;
   font-size: 0.875rem;
   color: inherit;
   outline: none;
+  padding: 0.5rem;
+  width: 100%;
+  cursor: pointer;
 }
 
 .goog-logo-link,
-.goog-te-gadget span {
+.goog-te-gadget span,
+.goog-te-banner,
+.goog-te-balloon-frame,
+.goog-te-menu-frame {
   display: none !important;
+  visibility: hidden !important;
 }
 
 body {
   top: 0 !important;
+  position: relative !important;
+}
+
+/* Prevent body shift when translate loads */
+html {
+  margin-top: 0 !important;
 }
