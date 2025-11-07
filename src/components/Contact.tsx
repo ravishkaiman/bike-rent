@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 
 const Contact = () => {
   const contactInfo = [
@@ -20,6 +20,12 @@ const Contact = () => {
       title: "Email Us",
       content: "unawatunabikerental@gmail.com",
       subContent: "We reply within 24hrs"
+    },
+    {
+      icon: Send,
+      title: "Chat on Telegram",
+      content: "@unawatunabikerent",
+      subContent: "Join our Telegram channel"
     },
     {
       icon: Clock,
@@ -46,9 +52,11 @@ const Contact = () => {
             const isVisitUs = info.title === "Visit Us";
             const isCallUs = info.title === "Call Us";
             const isEmailUs = info.title === "Email Us";
+            const isTelegram = info.title === "Chat on Telegram";
             const mapUrl = "https://maps.app.goo.gl/BSkmSX9cyBGY2oxk8";
             const telUrl = "tel:+94768087054";
             const gmailUrl = "https://mail.google.com/mail/?view=cm&fs=1&to=unawatunabikerental@gmail.com";
+            const telegramUrl = "https://t.me/unawatunabikerent";
             return (
               <Card key={index} className="border-border hover:shadow-lg transition-shadow">
                 {isVisitUs ? (
@@ -75,6 +83,17 @@ const Contact = () => {
                   </a>
                 ) : isEmailUs ? (
                   <a href={gmailUrl} target="_blank" rel="noopener noreferrer">
+                    <CardContent className="p-6 text-center">
+                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
+                        <Icon className="w-6 h-6 text-primary" />
+                      </div>
+                      <h3 className="text-lg font-bold mb-2 text-foreground">{info.title}</h3>
+                      <p className="text-muted-foreground text-sm mb-1">{info.content}</p>
+                      <p className="text-muted-foreground text-xs">{info.subContent}</p>
+                    </CardContent>
+                  </a>
+                ) : isTelegram ? (
+                  <a href={telegramUrl} target="_blank" rel="noopener noreferrer">
                     <CardContent className="p-6 text-center">
                       <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
                         <Icon className="w-6 h-6 text-primary" />
