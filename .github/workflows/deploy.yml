@@ -8,12 +8,8 @@ on:
 permissions:
   contents: write
 
-concurrency:
-  group: pages
-  cancel-in-progress: true
-
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,7 +30,7 @@ jobs:
       - name: Add SPA fallback (404.html)
         run: cp dist/index.html dist/404.html
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
