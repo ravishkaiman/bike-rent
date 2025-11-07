@@ -16,27 +16,38 @@ const LanguageSwitcher = () => {
   const translateElementRef = useRef<HTMLDivElement>(null);
 
   const initializeTranslate = () => {
-    const element = document.getElementById("google_translate_element");
-    if (!element) return;
-
-    // Clear any existing translate element
-    element.innerHTML = '';
-
-    if (window.google?.translate?.TranslateElement) {
-      try {
-        new window.google.translate.TranslateElement(
-          {
-            pageLanguage: "en",
-            includedLanguages: "en,de,fr,ru",
-            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
-            autoDisplay: false
-          },
-          "google_translate_element"
-        );
-      } catch (error) {
-        console.error('Error initializing translate:', error);
+    // Use requestIdleCallback if available, otherwise setTimeout for non-blocking execution
+    const scheduleWork = (callback: () => void) => {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(callback, { timeout: 500 });
+      } else {
+        setTimeout(callback, 0);
       }
-    }
+    };
+
+    scheduleWork(() => {
+      const element = document.getElementById("google_translate_element");
+      if (!element) return;
+
+      // Clear any existing translate element
+      element.innerHTML = '';
+
+      if (window.google?.translate?.TranslateElement) {
+        try {
+          new window.google.translate.TranslateElement(
+            {
+              pageLanguage: "en",
+              includedLanguages: "en,de,fr,ru",
+              layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+              autoDisplay: false
+            },
+            "google_translate_element"
+          );
+        } catch (error) {
+          console.error('Error initializing translate:', error);
+        }
+      }
+    });
   };
 
   useEffect(() => {
@@ -139,14 +150,17 @@ const LanguageSwitcher = () => {
     };
   }, []);
 
-  // Initialize translate when dropdown opens
+  // Initialize translate when dropdown opens - use requestAnimationFrame for better performance
   useEffect(() => {
     if (isOpen && isScriptLoaded) {
-      // Small delay to ensure DOM is ready
-      const timer = setTimeout(() => {
-        initializeTranslate();
-      }, 100);
-      return () => clearTimeout(timer);
+      // Use requestAnimationFrame to defer initialization and avoid blocking UI
+      const frameId = requestAnimationFrame(() => {
+        // Defer to next frame to ensure UI update completes first
+        setTimeout(() => {
+          initializeTranslate();
+        }, 0);
+      });
+      return () => cancelAnimationFrame(frameId);
     }
   }, [isOpen, isScriptLoaded]);
 
@@ -171,7 +185,12 @@ const LanguageSwitcher = () => {
     <div className="fixed z-50 top-4 right-4" ref={dropdownRef}>
       <div className="relative">
         <Button
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => {
+            // Use requestAnimationFrame to defer state update and avoid blocking
+            requestAnimationFrame(() => {
+              setIsOpen(!isOpen);
+            });
+          }}
           variant="outline"
           size="sm"
           className="bg-background/90 backdrop-blur border-border shadow-lg hover:bg-background"
