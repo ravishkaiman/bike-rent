@@ -11,13 +11,19 @@ declare global {
 
 const LanguageSwitcher = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const translateElementRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const scriptId = "google-translate-script";
+  const initializeTranslate = () => {
+    const element = document.getElementById("google_translate_element");
+    if (!element) return;
 
-    const initialize = () => {
-      if (window.google?.translate?.TranslateElement) {
+    // Clear any existing translate element
+    element.innerHTML = '';
+
+    if (window.google?.translate?.TranslateElement) {
+      try {
         new window.google.translate.TranslateElement(
           {
             pageLanguage: "en",
@@ -27,7 +33,23 @@ const LanguageSwitcher = () => {
           },
           "google_translate_element"
         );
+      } catch (error) {
+        console.error('Error initializing translate:', error);
       }
+    }
+  };
+
+  useEffect(() => {
+    const scriptId = "google-translate-script";
+
+    const initialize = () => {
+      setIsScriptLoaded(true);
+      // Small delay to ensure Google Translate is fully loaded
+      setTimeout(() => {
+        if (isOpen) {
+          initializeTranslate();
+        }
+      }, 100);
     };
 
     window.googleTranslateElementInit = initialize;
@@ -39,9 +61,12 @@ const LanguageSwitcher = () => {
       script.id = scriptId;
       script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
       script.async = true;
+      script.onload = () => {
+        setIsScriptLoaded(true);
+      };
       document.body.appendChild(script);
     } else if (window.google?.translate?.TranslateElement) {
-      initialize();
+      setIsScriptLoaded(true);
     }
 
     // Hide Google Translate banner immediately and continuously
@@ -113,6 +138,17 @@ const LanguageSwitcher = () => {
       if (observer) observer.disconnect();
     };
   }, []);
+
+  // Initialize translate when dropdown opens
+  useEffect(() => {
+    if (isOpen && isScriptLoaded) {
+      // Small delay to ensure DOM is ready
+      const timer = setTimeout(() => {
+        initializeTranslate();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, isScriptLoaded]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
