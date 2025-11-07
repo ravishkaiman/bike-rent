@@ -5,7 +5,8 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === "production" ? "/bike-rent/" : "/",
+  // Use /bike-rent/ for GitHub Pages, / for Vercel and local dev
+  base: process.env.VITE_BASE_PATH || (process.env.GITHUB_PAGES === "true" ? "/bike-rent/" : "/"),
   server: {
     host: "::",
     port: 8080,

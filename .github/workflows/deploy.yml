@@ -26,6 +26,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          GITHUB_PAGES: "true"
 
       - name: Add SPA fallback (404.html)
         run: cp dist/index.html dist/404.html
