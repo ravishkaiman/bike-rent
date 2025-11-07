@@ -114,3 +114,36 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Google Translate customizations */
+iframe.goog-te-banner-frame {
+  display: none !important;
+}
+
+div#google_translate_element .goog-te-gadget-simple {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+div#google_translate_element .goog-te-gadget-simple span {
+  color: inherit !important;
+}
+
+div#google_translate_element .goog-te-combo {
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: inherit;
+  outline: none;
+}
+
+.goog-logo-link,
+.goog-te-gadget span {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+}
