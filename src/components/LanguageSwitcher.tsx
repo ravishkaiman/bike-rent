@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -11,6 +11,7 @@ declare global {
 
 const LanguageSwitcher = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const scriptId = "google-translate-script";
@@ -43,27 +44,64 @@ const LanguageSwitcher = () => {
       initialize();
     }
 
-    // Hide Google Translate banner immediately
+    // Hide Google Translate banner immediately and continuously
     const hideBanner = () => {
-      const banner = document.querySelector('.goog-te-banner-frame');
-      if (banner) {
+      // Hide all possible banner elements
+      const banners = document.querySelectorAll('.goog-te-banner-frame, iframe.goog-te-banner-frame, .goog-te-banner, #google_translate_element iframe');
+      banners.forEach((banner) => {
         (banner as HTMLElement).style.display = 'none';
-      }
+        (banner as HTMLElement).style.visibility = 'hidden';
+        (banner as HTMLElement).style.opacity = '0';
+        (banner as HTMLElement).style.height = '0';
+        (banner as HTMLElement).style.width = '0';
+      });
+      
+      // Prevent body shift
       const body = document.body;
       if (body) {
         body.style.top = '0px';
+        body.style.position = 'relative';
+      }
+      
+      const html = document.documentElement;
+      if (html) {
+        html.style.marginTop = '0px';
       }
     };
+
+    // Use MutationObserver to catch dynamically added banners
+    const observer = new MutationObserver(hideBanner);
+    observer.observe(document.body, { childList: true, subtree: true });
 
     // Check periodically for banner
     const interval = setInterval(hideBanner, 100);
     hideBanner();
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      observer.disconnect();
+    };
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
   return (
-    <div className="fixed z-50 top-4 right-4">
+    <div className="fixed z-50 top-4 right-4" ref={dropdownRef}>
       <div className="relative">
         <Button
           onClick={() => setIsOpen(!isOpen)}
@@ -75,7 +113,7 @@ const LanguageSwitcher = () => {
           <span className="hidden sm:inline">Language</span>
         </Button>
         {isOpen && (
-          <div className="absolute top-full right-0 mt-2 bg-background border border-border rounded-lg shadow-lg p-2 min-w-[200px]">
+          <div className="absolute top-full right-0 mt-2 bg-background border border-border rounded-lg shadow-lg p-3 min-w-[200px] z-50">
             <div
               id="google_translate_element"
               className="w-full"
