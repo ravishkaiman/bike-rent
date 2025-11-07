@@ -46,40 +46,52 @@ const LanguageSwitcher = () => {
 
     // Hide Google Translate banner immediately and continuously
     const hideBanner = () => {
-      // Hide all possible banner elements
-      const banners = document.querySelectorAll('.goog-te-banner-frame, iframe.goog-te-banner-frame, .goog-te-banner, #google_translate_element iframe');
-      banners.forEach((banner) => {
-        (banner as HTMLElement).style.display = 'none';
-        (banner as HTMLElement).style.visibility = 'hidden';
-        (banner as HTMLElement).style.opacity = '0';
-        (banner as HTMLElement).style.height = '0';
-        (banner as HTMLElement).style.width = '0';
-      });
-      
-      // Prevent body shift
-      const body = document.body;
-      if (body) {
-        body.style.top = '0px';
-        body.style.position = 'relative';
-      }
-      
-      const html = document.documentElement;
-      if (html) {
-        html.style.marginTop = '0px';
+      try {
+        // Hide all possible banner elements
+        const banners = document.querySelectorAll('.goog-te-banner-frame, iframe.goog-te-banner-frame, .goog-te-banner, #google_translate_element iframe');
+        banners.forEach((banner) => {
+          if (banner instanceof HTMLElement) {
+            banner.style.display = 'none';
+            banner.style.visibility = 'hidden';
+            banner.style.opacity = '0';
+            banner.style.height = '0';
+            banner.style.width = '0';
+          }
+        });
+        
+        // Prevent body shift
+        if (document.body) {
+          document.body.style.top = '0px';
+          document.body.style.position = 'relative';
+        }
+        
+        if (document.documentElement) {
+          document.documentElement.style.marginTop = '0px';
+        }
+      } catch (error) {
+        // Silently handle any errors
+        console.error('Error hiding banner:', error);
       }
     };
 
     // Use MutationObserver to catch dynamically added banners
-    const observer = new MutationObserver(hideBanner);
-    observer.observe(document.body, { childList: true, subtree: true });
+    let observer: MutationObserver | null = null;
+    let interval: NodeJS.Timeout | null = null;
 
-    // Check periodically for banner
-    const interval = setInterval(hideBanner, 100);
-    hideBanner();
+    try {
+      observer = new MutationObserver(hideBanner);
+      observer.observe(document.body, { childList: true, subtree: true });
+
+      // Check periodically for banner
+      interval = setInterval(hideBanner, 100);
+      hideBanner();
+    } catch (error) {
+      console.error('Error setting up banner hiding:', error);
+    }
 
     return () => {
-      clearInterval(interval);
-      observer.disconnect();
+      if (interval) clearInterval(interval);
+      if (observer) observer.disconnect();
     };
   }, []);
 
