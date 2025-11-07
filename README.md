@@ -66,5 +66,5 @@ This project is deployed on:
 
 - **Website**: https://unawatunabikerent.com
 - **Email**: unawatunabikerental@gmail.com
-- **Phone**: +94 768087054
+- **Phone**: +94 728687054
 - **Telegram**: https://t.me/unawatunabikerent

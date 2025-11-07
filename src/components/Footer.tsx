@@ -12,7 +12,7 @@ const Footer = () => {
           <div className="flex flex-col items-center md:items-end gap-3">
             <div className="flex items-center gap-4">
               <a
-                href="https://wa.me/94768087054"
+                href="https://wa.me/94728687054"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"

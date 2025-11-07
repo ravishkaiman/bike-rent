@@ -41,7 +41,7 @@ const BookingForm = ({ children, preselectedBike }: BookingFormProps) => {
       `End Date: ${endDate}%0A` +
       `Notes: ${notes}`;
 
-    const whatsappNumber = "94768087054"; // +94 76808 7054
+    const whatsappNumber = "94728687054"; // +94 728687054
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
 
     window.open(whatsappUrl, "_blank");
@@ -76,7 +76,7 @@ const BookingForm = ({ children, preselectedBike }: BookingFormProps) => {
           
           <div className="space-y-2">
             <Label htmlFor="phone">Phone Number *</Label>
-            <Input id="phone" type="tel" required placeholder="+94 768087054" />
+            <Input id="phone" type="tel" required placeholder="+94 728687054" />
           </div>
           
           <div className="space-y-2">

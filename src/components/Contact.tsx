@@ -12,7 +12,7 @@ const Contact = () => {
     {
       icon: Phone,
       title: "Call Us",
-      content: "+94 768087054",
+      content: "+94 728687054",
       subContent: "Mon-Sun: 8am - 8pm"
     },
     {
@@ -54,7 +54,7 @@ const Contact = () => {
             const isEmailUs = info.title === "Email Us";
             const isTelegram = info.title === "Chat on Telegram";
             const mapUrl = "https://maps.app.goo.gl/BSkmSX9cyBGY2oxk8";
-            const telUrl = "tel:+94768087054";
+            const telUrl = "tel:+94728687054";
             const gmailUrl = "https://mail.google.com/mail/?view=cm&fs=1&to=unawatunabikerental@gmail.com";
             const telegramUrl = "https://t.me/unawatunabikerent";
             return (
