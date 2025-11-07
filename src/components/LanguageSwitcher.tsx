@@ -79,12 +79,31 @@ const LanguageSwitcher = () => {
     let interval: NodeJS.Timeout | null = null;
 
     try {
-      observer = new MutationObserver(hideBanner);
-      observer.observe(document.body, { childList: true, subtree: true });
+      if (document.body) {
+        observer = new MutationObserver(hideBanner);
+        observer.observe(document.body, { childList: true, subtree: true });
 
-      // Check periodically for banner
-      interval = setInterval(hideBanner, 100);
-      hideBanner();
+        // Check periodically for banner
+        interval = setInterval(hideBanner, 100);
+        hideBanner();
+      } else {
+        // Wait for body to be ready
+        const checkBody = setInterval(() => {
+          if (document.body) {
+            clearInterval(checkBody);
+            observer = new MutationObserver(hideBanner);
+            observer.observe(document.body, { childList: true, subtree: true });
+            interval = setInterval(hideBanner, 100);
+            hideBanner();
+          }
+        }, 50);
+        
+        return () => {
+          clearInterval(checkBody);
+          if (interval) clearInterval(interval);
+          if (observer) observer.disconnect();
+        };
+      }
     } catch (error) {
       console.error('Error setting up banner hiding:', error);
     }
